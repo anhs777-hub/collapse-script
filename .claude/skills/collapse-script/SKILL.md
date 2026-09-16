@@ -1,6 +1,6 @@
 ---
 name: collapse-script
-description: 유튜브 몰락 다큐멘터리 대본 작가. 기업·브랜드·인물·산업의 몰락을 "정점 → 성공 → 균열 → 오판 → 결정타 → 붕괴 → 현재" 스토리로 쓴다. "대본 만들어줘", "몰락 대본", "제목만 뽑아줘", "이어서 해줘" 등 대본·제목·썸네일 관련 요청 시 사용. 적합도 평가 → 리서치 → 스토리 설계 → 집필 → 검수 → 완성본(13항목) 순서로 자동 진행.
+description: 유튜브 몰락 다큐멘터리 대본 작가. 기업·브랜드·인물·산업의 몰락을 "정점 → 성공 → 균열 → 오판 → 결정타 → 붕괴 → 현재" 스토리로 쓴다. "대본 만들어줘", "몰락 대본", "제목만 뽑아줘", "이어서 해줘" 등 대본·제목·썸네일 관련 요청 시 사용. 적합도 평가 → 리서치 → 스토리 설계 → 집필 → 검수 → 완성본 3종(대본·썸네일제목·업로드정보) 순서로 자동 진행.
 ---
 
 # Collapse Script — 몰락 다큐 대본 작가
@@ -41,12 +41,15 @@ description: 유튜브 몰락 다큐멘터리 대본 작가. 기업·브랜드·
 
 | 단계 | Read할 파일 |
 |------|-------------|
-| EVALUATE | `prompts/collapse-review.md` (적합도 평가 부분만) |
+| EVALUATE | `prompts/collapse-review.md` (적합도 평가 부분만) + `prompts/pd-guide.md` (1·2·3절) |
 | RESEARCH | `prompts/collapse-research.md` |
-| PLAN | `prompts/collapse-structure.md` |
+| PLAN | `prompts/collapse-structure.md` + `prompts/pd-guide.md` (4·5절 — 이미 읽었으면 생략) |
 | DRAFT | `prompts/collapse-structure.md` (이미 읽었으면 생략) + `prompts/collapse-style.md` |
 | REVIEW | `prompts/collapse-review.md` (검수 12항목) + `prompts/collapse-style.md`의 TTS 규칙 |
-| FINALIZE | `prompts/collapse-titles.md` + `prompts/collapse-output.md` |
+| FINALIZE | `prompts/collapse-output.md` (출력 ①②) |
+| METADATA | `prompts/collapse-titles.md` + `prompts/collapse-output.md` (출력 ③④) + `prompts/pd-guide.md` (6절) |
+
+`pd-guide.md`는 **판단 가이드이지 정본이 아니다.** 분량·문체·섹션 구조·제목 형식이 다른 파일과 어긋나 보이면 언제나 `config/profile.md`와 `prompts/collapse-*.md`가 이긴다.
 
 ---
 
@@ -67,13 +70,15 @@ description: 유튜브 몰락 다큐멘터리 대본 작가. 기업·브랜드·
 {P}/_work/plan.md 없음               → PLAN
 {P}/_work/draft.md 없음              → DRAFT
 {P}/_work/review.md 없음             → REVIEW
-{P}/output/02_대본.txt 없음          → FINALIZE
+{P}/output/01_대본.txt 없음          → FINALIZE
+{P}/output/03_업로드정보.md 없음     → METADATA
 전부 있음                            → DONE
 ```
 
 위에서 아래로 검사해 첫 번째로 걸리는 상태가 현재 상태다.
 - "이어서 해줘" → 상태 감지 → 해당 단계부터
-- "대본 다시 써줘" → `draft.md`, `review.md`, `output/` 삭제 후 DRAFT부터 (research·plan은 유지)
+- "대본 다시 써줘" → `draft.md`, `review.md`, `_work/기획서.md`, `output/` 삭제 후 DRAFT부터 (research·plan은 유지)
+- "제목 다시 뽑아줘" · "업로드 정보만 다시" → `output/02`·`03` 삭제 후 METADATA부터
 - "구조부터 다시" → `plan.md` 이후 삭제 후 PLAN부터
 
 ---
@@ -83,6 +88,8 @@ description: 유튜브 몰락 다큐멘터리 대본 작가. 기업·브랜드·
 ### EVALUATE — 적합도 평가 → `_work/evaluation.md`
 7개 기준을 각 10점, 총 70점으로 평가한다 (기준·채점 가이드는 `prompts/collapse-review.md`).
 - 45점 미만이면 한 줄 경고 후 그대로 진행한다 ("낙차가 작아 훅이 약할 수 있습니다"). 중단하지 않는다.
+- `pd-guide.md` 3절로 점수를 해석한다. **낙차가 낮으면 소재를 버리지 말고 몰락의 주어를 바꾼다** (1절 참조).
+- `pd-guide.md` 1절에서 앵글 유형을 하나 고르고 evaluation.md에 적는다.
 - 채팅 보고: 총점 + 가장 낮은 항목 1개 + 보완 방향 한 줄.
 
 ### RESEARCH — 자료 조사 → `_work/research.md`
@@ -98,6 +105,9 @@ description: 유튜브 몰락 다큐멘터리 대본 작가. 기업·브랜드·
 3. 13개 섹션별 내용 요약 + 글자수 배분 + 각 섹션의 리텐션 장치 (60~90초마다 1개)
 4. FALSE SAFETY(희망 구간) 위치와 POINT OF NO RETURN 사건 확정
 5. 엔딩 한 문장 (교훈이 아니라 해석)
+6. `pd-guide.md` 5절의 장치 4개(팩트체크 블록 · 대조군 반전 · 통계 뒤 사람 · 시청자 호명) 배치 위치 확정
+
+plan.md를 확정하기 전에 `pd-guide.md` 4절 체크리스트를 전부 통과시킨다. 하나라도 걸리면 plan을 고치고 다시 본다.
 
 ### DRAFT — 집필 → `_work/draft.md`
 `prompts/collapse-style.md`의 문체 규칙으로 plan.md의 13개 섹션을 **처음부터 끝까지 한 번에** 쓴다.
@@ -111,10 +121,26 @@ description: 유튜브 몰락 다큐멘터리 대본 작가. 기업·브랜드·
 - 금지 표현 목록 grep → 발견 시 구체적 사실로 교체
 - review.md에는 항목별 ✓/✗ + 수정 내역만 기록
 
-### FINALIZE — 완성본 → `output/`
-`prompts/collapse-titles.md`로 제목 10·썸네일 문구 10·댓글 유도 질문 3개를 만들고, `prompts/collapse-output.md` 템플릿으로 저장한다.
-- `output/01_완성본.md` — 적합도 평가 + 13항목 전체 (사용자가 지정한 순서 그대로)
-- `output/02_대본.txt` — 훅 → 본문 → 엔딩 → 댓글 유도까지 **순수 나레이션만** (섹션 제목·괄호·따옴표·특수문자 제거, 문단은 빈 줄로 구분)
+### FINALIZE — 기획서와 대본 → `_work/기획서.md`, `output/01_대본.txt`
+
+`prompts/collapse-output.md`의 출력 ①②를 만든다.
+
+- `_work/기획서.md` — 적합도 평가 + 13항목 전체. 제작자가 보는 내부 문서
+- `output/01_대본.txt` — 훅 → 본문 → 엔딩 → 댓글 유도까지 **순수 나레이션만** (섹션 제목·괄호·따옴표·특수문자 제거, 문단은 빈 줄로 구분)
+
+저장 후 `01_대본.txt`의 글자수(공백 포함)를 세어 예상 분량을 계산한다.
+
+### METADATA — 유튜브 문서 → `output/02`, `output/03`
+
+`prompts/collapse-titles.md`로 제목 10 · 썸네일 문구 10 · 이미지 프롬프트 5 · 댓글 유도 질문 3개를 만들고, `prompts/collapse-output.md`의 출력 ③④ 형식으로 저장한다.
+
+- `output/02_썸네일제목.md` — 영상의 방향 4줄 + 제목 후보 10 + 썸네일 문구 10 + 영문 이미지 프롬프트 5
+- `output/03_업로드정보.md` — 제목 · 설명글(#키워드 → 한줄 요약 → 📌 다루는 내용 → ⏱ 타임스탬프 → 🔗 주요 출처 → 🔔 CTA) · 태그 · 고정 댓글
+
+- 제목은 02의 추천 1번을 03에 **그대로** 옮긴다. 03에서 새로 짓지 않는다
+- 타임스탬프는 13개 섹션을 7~9개 챕터로 묶고, 섹션별 글자수 누적 ÷ 분당 글자수로 계산한다. 챕터 제목에 내부 용어와 스포일러를 쓰지 않는다. 이 시각은 추정치이고, 영상 완성 후 timestamp 스킬("타임스탬프 채워줘")이 전사 실측으로 교체한다
+- 02·03은 사용자가 직접 읽는 문서다. 내부 용어(앵글·리텐션 브리지·POINT OF NO RETURN)를 풀어 쓴다
+- **`03_업로드정보.md`를 마지막에 저장한다** (DONE 마커)
 
 ---
 
@@ -124,16 +150,18 @@ description: 유튜브 몰락 다큐멘터리 대본 작가. 기업·브랜드·
 
 1. 주제 · 적합도 총점 (70점 만점) · 최종 글자수 → 예상 분량
 2. 추천 콘셉트 한 줄 + 핵심 미스터리 한 문장
-3. 추천 제목 3개 · 추천 썸네일 문구 3개
-4. 파일 경로 2개 (`output/01_완성본.md`, `output/02_대본.txt`)
+3. 추천 제목 1개 · 추천 썸네일 문구 1개
+4. 산출물 — `output/` 폴더에 번호 순서대로:
+   - `output/01_대본.txt` — 최종 대본 (영상 제작 사이트에 올릴 파일)
+   - `output/02_썸네일제목.md` — 제목 후보 + 썸네일 문구 + 이미지 생성 프롬프트
+   - `output/03_업로드정보.md` — 제목·설명글·태그·고정 댓글 (그대로 복사해 업로드)
+   - (기획서·편집 노트는 `_work/기획서.md`)
 5. `[미확인]`으로 남은 숫자가 있으면 목록
 6. 마지막 줄 고정: "다음 대본은 새 세션에서 시작하세요. (`/clear` 후 '대본 만들어줘 — 주제')"
 
----
-
 ## 5. 필수 규칙
 
-- 대본 본문에 연출 지시("여기서 그래프 삽입")를 쓰지 않는다. 편집 지시는 완성본 11번 항목(편집자 강조 포인트)에만 쓴다.
+- 대본 본문에 연출 지시("여기서 그래프 삽입")를 쓰지 않는다. 편집 지시는 `_work/기획서.md` 11번 항목(편집자 강조 포인트)에만 쓴다.
 - 창업자·경영진의 선택은 **당시 상황과 선택지**를 보여주고 설명한다. "무능했다", "바보 같은 선택" 금지.
 - HOOK에서 몰락 원인의 정답을 말하지 않는다. 답은 THE REAL REASON에서 나온다.
 - 몰락 원인은 최대 3개. 서로 인과로 연결된다.
